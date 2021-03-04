@@ -33,19 +33,37 @@ app.debug = True
 #    'b':{'x':2, 'y':3}
 # }
 
+# function updateTweets(){
+#     var promise = fetch('http://127.0.')
+#     promise.then( response => {
+#         if (response.status === 200) {
+#             return response.json()
+#         }
+#     }).then( json => {
+#         var domview = documnet.getElementById('domview')
+#         // already parsed
+#         domview.innerText = json.number
+#         // domview.innerHTML = "<h2>"" + json.number + "</h2>"
+#     })
+#     window.setInterval(updateTweets, 1000)
+# }
+
 class World:
     def __init__(self):
         self.clear()
         
     # What is entity, key, value?    
+    # I think this changes an EXISTING entity
     def update(self, entity, key, value):
         entry = self.space.get(entity,dict())
         entry[key] = value
         self.space[entity] = entry
 
+    # I think this creates a NEW entity. Or it completely overwrites it
     def set(self, entity, data):
         self.space[entity] = data
 
+    # I think this DELETES all entities because space is the dict containing all entities. It is cleared here.
     def clear(self):
         self.space = dict()
 
@@ -81,21 +99,44 @@ def hello():
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
+
+    # # If an entity doesn't exist, create a new one
+    # if myWorld.get(entity) == {}:
+    #     # Where do I get the data parameter?
+    #     myWorld.set(entity, dict())
+    # else:
+
     return None
 
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
+
+    # return myWorld.world()
+
     return None
 
+# When I go to http://localhost:5000/entity/a, what should I see?
 @app.route("/entity/<entity>")    
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
+
+    # this prints a if I go to http://localhost:5000/entity/a
+    # print(entity) 
+
+    # I think this should give me the dictionary value, since I use the entity to key it
+    # print(myWorld.space[entity])
+
+    # return myWorld.get(entity)
+    
     return None
 
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
+    
+    # myWorld.clear()
+    
     return None
 
 if __name__ == "__main__":
