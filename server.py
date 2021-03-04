@@ -100,10 +100,12 @@ def hello():
 def update(entity):
     '''update the entities via this interface'''
 
+    # requestData = flask_post_json()
+
     # # If an entity doesn't exist, create a new one
     # if myWorld.get(entity) == {}:
-    #     # Where do I get the data parameter?
-    #     myWorld.set(entity, dict())
+    #     # Where do I get the data parameter? The request data I think.
+    #     myWorld.set(entity, )
     # else:
 
     return None
