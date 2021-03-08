@@ -76,6 +76,7 @@ class World:
 # you can test your webservice from the commandline
 # curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
 
+
 myWorld = World()          
 
 # I give this to you, this is how you get the raw body/data portion of a post in flask
@@ -96,13 +97,16 @@ def hello():
 
     return flask.redirect("/static/index.html")
 
+# curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
+# curl -v -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}'
+# Use POST like a PUT when your don’t have an ID. PUT doesn't have to be a creation, it could be a replacement
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
 
     requestData = flask_post_json()
 
-    print("Request data from POST/PUT request:", requestData)
+    # print("Request data from POST/PUT request:", requestData)
 
     myEntity = myWorld.get(entity)
 
@@ -112,22 +116,21 @@ def update(entity):
         myWorld.set(entity, requestData)
     else:
         for key in requestData.keys():
-            print("Key:", key, "Value:", requestData[key])
-            # myWorld.update(entity, key, requestData[key])
+            # print("Key:", key, "Value:", requestData[key])
+            myWorld.update(entity, key, requestData[key])
 
     # Can just return the json of the entity that was sent?
     # return None
     return (json.dumps(requestData), 201)
 
+# curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/world -d
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
 
     return myWorld.world()
 
-    # return None
-
-# When I go to http://localhost:5000/entity/a, what should I see?
+# curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/entity/X
 @app.route("/entity/<entity>")    
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
@@ -139,17 +142,17 @@ def get_entity(entity):
     # print(myWorld.space[entity])
 
     return (json.dumps(myWorld.get(entity)), 200)
-    
-    # return None
 
+# curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/clear -d
+# curl -v -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/clear -d
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
     
     myWorld.clear()
     
+    # use 204
     return (json.dumps({}), 200)
-    # return None
 
 if __name__ == "__main__":
     app.run()

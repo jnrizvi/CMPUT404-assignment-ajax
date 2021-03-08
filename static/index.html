@@ -32,7 +32,9 @@
         var H = canvas.height = window.innerHeight-50;
 
 
+        // IMPLEMENT THIS FIRST
         function sendJSONXMLHTTPRequest(url, objects, callback) {
+            // Look up how xhr works for http requests
             var xhr = new XMLHttpRequest();
             xhr.onreadystatechange = function () {
                 if (xhr.readyState==4) {
@@ -40,6 +42,7 @@
                         if (xhr.status==200) {
                             //XXX: parse some JSON from the request!
                             //XXX: Pass the data to the callback!
+
                         }
                     } 
                     catch(e) {
@@ -92,8 +95,11 @@
         // This actually draws the frame
         function renderFrame() {
             clearFrame();
+            // The world object needs to be updated with all the entities from the URI
             for (var key in world) {
                 var entity = world[key];
+
+                // Context is jsut the cavas, prepEntity will assign color and radius if not already there
                 drawCircle(context,prepEntity(entity));
             }
         }
@@ -133,15 +139,17 @@
             }
         }
 
-
+        // This is called by addEntityWithoutName only
         function addEntity(entity, data) {
             world[entity] = data;
             drawNextFrame(); // (but should we?)
             //XXX: Send a XHTML Request that updates the entity you just  modified!
-
+            
+            // sendJSONXMLHTTPRequest
         }
 
         var counter = 0;
+        // This is pushed onto mouse's listener lists (mousedraggers, mousedowners, mouseuppers) as application specific handlers
         function addEntityWithoutName(data) {
             //var name = "X"+Math.floor((Math.random()*100)+1);
             var name = "X"+(counter++)%100;
@@ -229,6 +237,7 @@
                     return self.mousemove(e);
             },
             // Install the mouse listeners
+            // The mouse event listeners are added to the canvas
             mouseinstall: function() {
                     canvas.addEventListener("mousedown",  self.mousedown, false);
                     canvas.addEventListener("mousemove",  self.mousemove, false);
@@ -246,6 +255,7 @@
 
         // Add the application specific mouse listeners!
         //XXX: TODO Make these prettier!
+        // I think "prettier" means not being just circles? Refer to the lecture when I asked questions
         mouse.mousedowners.push(function(x,y,clicked,e) {
             addEntityWithoutName({'x':x,'y':y,'colour':'blue'});
         });
@@ -263,8 +273,11 @@
         function update() {
             //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
             drawFrame();
+
+            // sendJSONXMLHTTPRequest
         }
 
+        // CODE STARTS HERE
         // 30 frames per second
         setInterval( update, 1000/30.0);
 
