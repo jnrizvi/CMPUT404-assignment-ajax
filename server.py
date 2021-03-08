@@ -99,6 +99,7 @@ def hello():
 
 # curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
 # curl -v -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}'
+# Do I need POST if PUT can be used to create AND update something?
 # Use POST like a PUT when your don’t have an ID. PUT doesn't have to be a creation, it could be a replacement
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):

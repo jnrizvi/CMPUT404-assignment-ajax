@@ -33,16 +33,28 @@
 
 
         // IMPLEMENT THIS FIRST
+        // Used lecture code as reference: https://github.com/abramhindle/CMPUT404-AJAX-Slides/blob/master/CodeCompleteExample/static/codecomplete.js
+        // objects needs the keys: method, body
         function sendJSONXMLHTTPRequest(url, objects, callback) {
             // Look up how xhr works for http requests
             var xhr = new XMLHttpRequest();
+
+            // Use the method specified, fall back to GET if it's not provided.
+            xhr.open( objects["method"] || 'GET', url);
+
             xhr.onreadystatechange = function () {
                 if (xhr.readyState==4) {
                     try {
                         if (xhr.status==200) {
                             //XXX: parse some JSON from the request!
                             //XXX: Pass the data to the callback!
-
+                            
+                            // extract stuff from xhr.responseText and pass it into the callback.
+                            // callback is probably a function that draws circles to the screen or something
+                            console.log(xhr.responseText);
+                            
+                            // callback goes here
+                            callback
                         }
                     } 
                     catch(e) {
@@ -53,6 +65,15 @@
             //XXX: POST to a URL
             //XXX: set the mimetype and the accept headers!
             // Remember to use application/json !
+
+            // What mimetypes and headers are there? List here.
+            // HTTP Headers: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
+            // I think I'm supposed to get the headers, content-type, body and more from the object variable, like object["accept"], as seen in the lecture code
+            xhr.setRequestHeader("Accept", "application/json")
+            xhr.overrideMimeType("application/json");
+
+            // Yeah. I definitely need to use the object variable.
+            xhr.send()
         }
 
 
@@ -145,7 +166,14 @@
             drawNextFrame(); // (but should we?)
             //XXX: Send a XHTML Request that updates the entity you just  modified!
             
-            // sendJSONXMLHTTPRequest
+            url = `http://127.0.0.1:5000/entity/${entity}`
+            objects = {
+                "method": "PUT",
+                "data": data
+            }
+
+            // Should I pass this as the callback?
+            sendJSONXMLHTTPRequest(url, objects, drawCircle(context, entity))
         }
 
         var counter = 0;
