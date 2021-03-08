@@ -74,7 +74,7 @@ class World:
         return self.space
 
 # you can test your webservice from the commandline
-# curl -v   -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
+# curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
 
 myWorld = World()          
 
@@ -100,23 +100,32 @@ def hello():
 def update(entity):
     '''update the entities via this interface'''
 
-    # requestData = flask_post_json()
+    requestData = flask_post_json()
+
+    print("Request data from POST/PUT request:", requestData)
+
+    myEntity = myWorld.get(entity)
 
     # # If an entity doesn't exist, create a new one
-    # if myWorld.get(entity) == {}:
-    #     # Where do I get the data parameter? The request data I think.
-    #     myWorld.set(entity, )
-    # else:
+    if myEntity == {}:
+        # Where do I get the data parameter? The request data I think.
+        myWorld.set(entity, requestData)
+    else:
+        for key in requestData.keys():
+            print("Key:", key, "Value:", requestData[key])
+            # myWorld.update(entity, key, requestData[key])
 
-    return None
+    # Can just return the json of the entity that was sent?
+    # return None
+    return (json.dumps(requestData), 201)
 
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
 
-    # return myWorld.world()
+    return myWorld.world()
 
-    return None
+    # return None
 
 # When I go to http://localhost:5000/entity/a, what should I see?
 @app.route("/entity/<entity>")    
@@ -129,17 +138,18 @@ def get_entity(entity):
     # I think this should give me the dictionary value, since I use the entity to key it
     # print(myWorld.space[entity])
 
-    # return myWorld.get(entity)
+    return (json.dumps(myWorld.get(entity)), 200)
     
-    return None
+    # return None
 
 @app.route("/clear", methods=['POST','GET'])
 def clear():
     '''Clear the world out!'''
     
-    # myWorld.clear()
+    myWorld.clear()
     
-    return None
+    return (json.dumps({}), 200)
+    # return None
 
 if __name__ == "__main__":
     app.run()
