@@ -106,6 +106,9 @@ def update(entity):
     '''update the entities via this interface'''
 
     requestData = flask_post_json()
+    
+    # https://stackoverflow.com/questions/26980713/solve-cross-origin-resource-sharing-with-flask
+    # response.headers.add('Access-Control-Allow-Origin', '*')
 
     # print("Request data from POST/PUT request:", requestData)
 
@@ -120,9 +123,9 @@ def update(entity):
             # print("Key:", key, "Value:", requestData[key])
             myWorld.update(entity, key, requestData[key])
 
-    # Can just return the json of the entity that was sent?
-    # return None
-    return (json.dumps(requestData), 201)
+    # Can just return the json of the entity that was sent? PUT returns the object that was PUT.
+    # Idk if the PUT code should be 200 or 201. I guess it depends on whether its updating or creating?
+    return (json.dumps(requestData), 200)
 
 # curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/world -d
 @app.route("/world", methods=['POST','GET'])    
@@ -157,3 +160,10 @@ def clear():
 
 if __name__ == "__main__":
     app.run()
+
+# When the JavaScript in my index.html makes a request to server.py using xmlhttprequest, I get the error in the JavaScript console:
+
+# Access to XMLHttpRequest at 'http://127.0.0.1:5000/entity/X1' from origin 'http://localhost:5000' has been blocked by CORS policy: 
+# Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+
+# Will I need to use Flask CORS?

@@ -37,6 +37,7 @@
         // objects needs the keys: method, body
         function sendJSONXMLHTTPRequest(url, objects, callback) {
             // Look up how xhr works for http requests
+            // does xhr use the fetch API?
             var xhr = new XMLHttpRequest();
 
             // Use the method specified, fall back to GET if it's not provided.
@@ -54,7 +55,7 @@
                             console.log(xhr.responseText);
                             
                             // callback goes here
-                            callback
+                            // callback
                         }
                     } 
                     catch(e) {
@@ -70,10 +71,12 @@
             // HTTP Headers: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers
             // I think I'm supposed to get the headers, content-type, body and more from the object variable, like object["accept"], as seen in the lecture code
             xhr.setRequestHeader("Accept", "application/json")
+            // xhr.setRequestHeader("Access-Control-Allow-Origin", "*")
+
             xhr.overrideMimeType("application/json");
 
             // Yeah. I definitely need to use the object variable.
-            xhr.send()
+            xhr.send(objects["data"])
         }
 
 
@@ -166,7 +169,7 @@
             drawNextFrame(); // (but should we?)
             //XXX: Send a XHTML Request that updates the entity you just  modified!
             
-            url = `http://127.0.0.1:5000/entity/${entity}`
+            url = `http://localhost:5000/entity/${entity}`
             objects = {
                 "method": "PUT",
                 "data": data
