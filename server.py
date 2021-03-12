@@ -79,6 +79,7 @@ class World:
 
 myWorld = World()          
 
+# Is this even used in the code example? Is it necessary?
 # I give this to you, this is how you get the raw body/data portion of a post in flask
 # this should come with flask but whatever, it's not my project.
 def flask_post_json():
@@ -110,13 +111,16 @@ def update(entity):
     # https://stackoverflow.com/questions/26980713/solve-cross-origin-resource-sharing-with-flask
     # response.headers.add('Access-Control-Allow-Origin', '*')
 
-    # print("Request data from POST/PUT request:", requestData)
+    print("request.json from POST/PUT request:", requestData)
+    # print("request.data from POST/PUT request:", request.data)
+    # print("Request data from POST/PUT request:", entity)
 
+    # get the <entity> url param from the entity variable
     myEntity = myWorld.get(entity)
 
-    # # If an entity doesn't exist, create a new one
+    # # # If an entity doesn't exist, create a new one
     if myEntity == {}:
-        # Where do I get the data parameter? The request data I think.
+    #     # Where do I get the data parameter? The request data I think.
         myWorld.set(entity, requestData)
     else:
         for key in requestData.keys():
@@ -126,13 +130,14 @@ def update(entity):
     # Can just return the json of the entity that was sent? PUT returns the object that was PUT.
     # Idk if the PUT code should be 200 or 201. I guess it depends on whether its updating or creating?
     return (json.dumps(requestData), 200)
+    # return (json.dumps({}), 200)
 
 # curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/world -d
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
 
-    return myWorld.world()
+    return (json.dumps(myWorld.world()), 200)
 
 # curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/entity/X
 @app.route("/entity/<entity>")    
