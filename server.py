@@ -79,7 +79,6 @@ class World:
 
 myWorld = World()          
 
-# Is this even used in the code example? Is it necessary?
 # I give this to you, this is how you get the raw body/data portion of a post in flask
 # this should come with flask but whatever, it's not my project.
 def flask_post_json():
@@ -95,13 +94,12 @@ def flask_post_json():
 @app.route("/")
 def hello():
     '''Return something coherent here.. perhaps redirect to /static/index.html '''
-
+    
+    # I don't think the world should be return here?
     return flask.redirect("/static/index.html")
 
 # curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
 # curl -v -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}'
-# Do I need POST if PUT can be used to create AND update something?
-# Use POST like a PUT when your don’t have an ID. PUT doesn't have to be a creation, it could be a replacement
 @app.route("/entity/<entity>", methods=['POST','PUT'])
 def update(entity):
     '''update the entities via this interface'''
@@ -111,28 +109,25 @@ def update(entity):
     # https://stackoverflow.com/questions/26980713/solve-cross-origin-resource-sharing-with-flask
     # response.headers.add('Access-Control-Allow-Origin', '*')
 
-    print("request.json from POST/PUT request:", requestData)
-    # print("request.data from POST/PUT request:", request.data)
-    # print("Request data from POST/PUT request:", entity)
+    # print("request data from POST/PUT request:", requestData)
 
     # get the <entity> url param from the entity variable
     myEntity = myWorld.get(entity)
 
-    # # # If an entity doesn't exist, create a new one
+    # If an entity doesn't exist, create a new one
     if myEntity == {}:
-    #     # Where do I get the data parameter? The request data I think.
+        # Where do I get the data parameter? The request data I think.
         myWorld.set(entity, requestData)
     else:
         for key in requestData.keys():
             # print("Key:", key, "Value:", requestData[key])
             myWorld.update(entity, key, requestData[key])
 
-    # Can just return the json of the entity that was sent? PUT returns the object that was PUT.
     # Idk if the PUT code should be 200 or 201. I guess it depends on whether its updating or creating?
     return (json.dumps(requestData), 200)
     # return (json.dumps({}), 200)
 
-# curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/world -d
+# curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/world
 @app.route("/world", methods=['POST','GET'])    
 def world():
     '''you should probably return the world here'''
@@ -143,12 +138,6 @@ def world():
 @app.route("/entity/<entity>")    
 def get_entity(entity):
     '''This is the GET version of the entity interface, return a representation of the entity'''
-
-    # this prints a if I go to http://localhost:5000/entity/a
-    # print(entity) 
-
-    # I think this should give me the dictionary value, since I use the entity to key it
-    # print(myWorld.space[entity])
 
     return (json.dumps(myWorld.get(entity)), 200)
 

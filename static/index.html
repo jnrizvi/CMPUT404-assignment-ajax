@@ -52,10 +52,13 @@
                             
                             // extract stuff from xhr.responseText and pass it into the callback.
                             // callback is probably a function that draws circles to the screen or something
-                            console.log(xhr.responseText);
+                            // console.log(xhr.responseText);
                             
                             // callback like this:
                             // objects["success"]( xhr.responseText );
+
+                            // update the world object here? But it's already updating!
+                            callback(xhr.responseText)
                         }
                     } 
                     catch(e) {
@@ -75,14 +78,17 @@
             xhr.setRequestHeader('Accept', 'application/json')
 
             xhr.overrideMimeType('application/json');
-            
-            console.log(xhr.getAllResponseHeaders())
 
             // console.log(objects)
 
             // Yeah. I definitely need to use the object variable.
             // Important to use stringify, otherwise the request.json on the python side is None
-            xhr.send(JSON.stringify(objects["body"]))
+            if ( objects["body"] ) {
+                xhr.send(JSON.stringify(objects["body"]))
+            }
+            else {
+                xhr.send()
+            }
         }
 
 
@@ -175,9 +181,10 @@
             drawNextFrame(); // (but should we?)
             //XXX: Send a XHTML Request that updates the entity you just  modified!
             
-            url = `http://127.0.0.1:5000/entity/${entity}`
+            // url = `http://127.0.0.1:5000/entity/${entity}`
             // url = `http://localhost:5000/entity/${entity}`
-            // url = `/entity/${entity}`
+            url = `/entity/${entity}`
+            // url = `${location.host}/entity/${entity}`
             objects = {
                 "method": "PUT",
                 "body": data
@@ -186,13 +193,16 @@
             // console.log(objects)
 
             // Should I pass this as the callback? See line 58 - 74 in codeexample js
-            sendJSONXMLHTTPRequest(url, objects, drawCircle(context, entity))
+            sendJSONXMLHTTPRequest(url, objects, (text) => {
+                let serverEntity = JSON.parse(text)
+                drawCircle(context, serverEntity)
+            })
         }
 
         var counter = 0;
         // This is pushed onto mouse's listener lists (mousedraggers, mousedowners, mouseuppers) as application specific handlers
         function addEntityWithoutName(data) {
-            //var name = "X"+Math.floor((Math.random()*100)+1);
+            // var name = "X"+Math.floor((Math.random()*100)+1);
             var name = "X"+(counter++)%100;
             addEntity(name,data);
         }
@@ -312,15 +322,30 @@
 
 
         function update() {
+            url = `/world`
+            objects = {
+                "method": "GET",
+            }
+
+            // console.log(objects)
+            // console.log(world)
+
+            // If you send the whole world to the user every 1/30th of a second you're going to have a bad day. You should only be sending diffs.
+            sendJSONXMLHTTPRequest(url, objects, (text) => {
+                let serverWorld = JSON.parse(text)
+                console.log(serverWorld)
+                // I think you do the diff before assigning to the world here, but let's just see first.
+                world = serverWorld
+            })
+            
             //XXX: TODO Get the world from the webservice using a XMLHTTPRequest
             drawFrame();
-
-            // sendJSONXMLHTTPRequest
         }
 
         // CODE STARTS HERE
         // 30 frames per second
-        setInterval( update, 1000/30.0);
+        // setInterval( update, 1000/30.0);
+        setInterval( update, 2000);
 
 
 
