@@ -33,21 +33,6 @@ app.debug = True
 #    'b':{'x':2, 'y':3}
 # }
 
-# function updateTweets(){
-#     var promise = fetch('http://127.0.')
-#     promise.then( response => {
-#         if (response.status === 200) {
-#             return response.json()
-#         }
-#     }).then( json => {
-#         var domview = documnet.getElementById('domview')
-#         // already parsed
-#         domview.innerText = json.number
-#         // domview.innerHTML = "<h2>"" + json.number + "</h2>"
-#     })
-#     window.setInterval(updateTweets, 1000)
-# }
-
 class World:
     def __init__(self):
         self.clear()
@@ -76,12 +61,7 @@ class World:
 # you can test your webservice from the commandline
 # curl -v -H "Content-Type: application/json" -X PUT http://127.0.0.1:5000/entity/X -d '{"x":1,"y":1}' 
 
-
-myWorld = World()   
-
-# First, I want to make sure the circles show up upon opening the page for each client.
-myWorld.set('a', {'x': 50, 'y': 100 })
-# myWorld.set('a', {'x':50, 'y':100})
+myWorld = World()
 
 # I give this to you, this is how you get the raw body/data portion of a post in flask
 # this should come with flask but whatever, it's not my project.
@@ -109,27 +89,19 @@ def update(entity):
     '''update the entities via this interface'''
 
     requestData = flask_post_json()
-    
-    # https://stackoverflow.com/questions/26980713/solve-cross-origin-resource-sharing-with-flask
-    # response.headers.add('Access-Control-Allow-Origin', '*')
-
-    # print("request data from POST/PUT request:", requestData)
 
     # get the <entity> url param from the entity variable
     myEntity = myWorld.get(entity)
 
     # If an entity doesn't exist, create a new one
     if myEntity == {}:
-        # Where do I get the data parameter? The request data I think.
         myWorld.set(entity, requestData)
     else:
         for key in requestData.keys():
             # print("Key:", key, "Value:", requestData[key])
             myWorld.update(entity, key, requestData[key])
 
-    # Idk if the PUT code should be 200 or 201. I guess it depends on whether its updating or creating?
     return (json.dumps(requestData), 200)
-    # return (json.dumps({}), 200)
 
 # curl -v -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/world
 @app.route("/world", methods=['POST','GET'])    
@@ -158,10 +130,3 @@ def clear():
 
 if __name__ == "__main__":
     app.run()
-
-# When the JavaScript in my index.html makes a request to server.py using xmlhttprequest, I get the error in the JavaScript console:
-
-# Access to XMLHttpRequest at 'http://127.0.0.1:5000/entity/X1' from origin 'http://localhost:5000' has been blocked by CORS policy: 
-# Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
-
-# Will I need to use Flask CORS?

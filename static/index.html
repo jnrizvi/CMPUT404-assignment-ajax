@@ -53,9 +53,6 @@
                             // extract stuff from xhr.responseText and pass it into the callback.
                             // callback is probably a function that draws circles to the screen or something
                             // console.log(xhr.responseText);
-                            
-                            // callback like this:
-                            // objects["success"]( xhr.responseText );
 
                             // update the world object here? But it's already updating!
                             callback(xhr.responseText)
@@ -190,14 +187,13 @@
             
             // url = `http://127.0.0.1:5000/entity/${entity}`
             // url = `http://localhost:5000/entity/${entity}`
-            url = `/entity/${entity}`
             // url = `${location.host}/entity/${entity}`
+
+            url = `/entity/${entity}`
             objects = {
                 "method": "PUT",
                 "body": data
             }
-
-            // console.log(objects)
 
             // Should I pass this as the callback? See line 58 - 74 in codeexample js
             sendJSONXMLHTTPRequest(url, objects, (text) => {
@@ -313,7 +309,6 @@
 
         // Add the application specific mouse listeners!
         //XXX: TODO Make these prettier!
-        // I think "prettier" means not being just circles? Refer to the lecture when I asked questions
         mouse.mousedowners.push(function(x,y,clicked,e) {
             addEntityWithoutName({'x':x,'y':y,'colour':'white'});
         });
@@ -340,7 +335,7 @@
             // If you send the whole world to the user every 1/30th of a second you're going to have a bad day. You should only be sending diffs.
             sendJSONXMLHTTPRequest(url, objects, (text) => {
                 let serverWorld = JSON.parse(text)
-                // console.log(serverWorld)
+
                 // I think you do the diff before assigning to the world here, but let's just see first.
                 // if ( there is a difference ) {
                 //     drawNextFrame()
@@ -353,9 +348,6 @@
         // 30 frames per second
         setInterval( update, 1000/30.0);
         // setInterval( update, 2000);
-
-
-
     </script>
 </body>
 </html>
